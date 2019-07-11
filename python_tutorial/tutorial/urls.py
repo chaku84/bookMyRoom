@@ -13,4 +13,6 @@ urlpatterns = [
   url(r'^mail/$', views.mail, name='mail'),
   # Events view ('/tutorial/events/')
   url(r'^events/$', views.events, name='events'),
+
+  url(r'^timeformat/$', views.check_availability, name='availa')  
 ]

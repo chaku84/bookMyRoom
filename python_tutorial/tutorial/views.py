@@ -1,10 +1,12 @@
 import time
-
+import xlrd
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from tutorial.authhelper import get_signin_url, get_token_from_code, get_access_token
 from tutorial.outlookservice import get_me,get_my_messages,get_my_events
+from tutorial.models import *
+from datetime import datetime
 
 # Create your views here.
 
@@ -54,3 +56,54 @@ def events(request):
     events = get_my_events(access_token)
     context = { 'events': events['value'] }
     return render(request, 'tutorial/events.html', context)
+
+
+def fillData(path):
+  room_sheets = xlrd.open_workbook(path)
+  first_sheet = room_sheets.sheet_by_index(0)
+  for i in range(2,63):
+    location = ''
+    for j in range(0,3):
+      if first_sheet.cell(i,j).value=='Cherry hills ':
+        location += ' '
+      location += first_sheet.cell(i,j).value 
+    # print(location)
+    new_room = RoomInfo(name = first_sheet.cell(i,3).value, total_seats = 8, location = location,
+                       projector_status = True, comm_status = True)
+    new_room.save()
+
+def check_availability(request):
+  post = request.POST
+  print ('karlo acche se')
+  #'start': ['2019-07-12 11:50'], 'duration': ['39']
+  
+  start_time = epochs(post['start'])
+  end_time = start_time + int(post['duration'])*60
+  print(post['start'])
+  print(post['duration'])
+  print(start_time)
+  print(end_time)
+  booked_rooms = Bookings.objects.all()
+  all_rooms = RoomInfo.objects.all()
+  available_rooms = []
+  s = set()
+  cnt=0
+  for i in booked_rooms:
+
+    if cnt == 0:
+      print("tm:"+str(i.start_time.timestamp()))
+    if i.start_time.timestamp()<=start_time<=i.end_time.timestamp() or i.start_time.timestamp()<=end_time<=i.end_time.timestamp():
+      s.add(i.room_name)
+  for i in all_rooms:
+    if i not in s:
+      available_rooms.append(i)
+  return render(request,'tutorial/timeformat.html',{'available_rooms':all_rooms})
+
+def epochs(tm):
+  stArr=tm.split(' ')
+  stArr2=list(map(int,stArr[0].split('-')))
+  stArr3=list(map(int,stArr[1].split(':')))
+
+  start_time = datetime(stArr2[0],stArr2[1],stArr2[2],stArr3[0],stArr3[1]).timestamp()
+  return start_time
+

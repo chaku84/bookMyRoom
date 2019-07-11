@@ -1,0 +1,17 @@
+{% extends "tutorial/layout.html" %}
+{% block content %}
+<h1>Available Rooms</h1>
+<table class="table">
+  <tr>
+    
+  </tr>
+
+  {% for room in available_rooms %}
+    <tr>
+      <td>{{ room.name }}</td>
+      <td>{{ room.location }}</td>
+      <!-- <td>{{ event.end.dateTime }} ({{ event.end.timeZone }})</td> -->
+    </tr>
+  {% endfor %}
+</table>
+{% endblock %}
