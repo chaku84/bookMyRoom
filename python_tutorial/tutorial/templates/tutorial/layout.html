@@ -52,16 +52,51 @@
     {% block content %}{% endblock %}
   </div>
 <script src="static/js/jquery-3.2.1.min.js"></script>
-        <script src="static/js/popper.js"></script>
-        <script src="static/js/bootstrap.min.js"></script>
-        <script src="static/vendors/owl-carousel/owl.carousel.min.js"></script>
-        <script src="static/js/jquery.ajaxchimp.min.js"></script>
-        <script src="static/js/mail-script.js"></script>
-        <script src="static/vendors/bootstrap-datepicker/bootstrap-datetimepicker.min.js"></script>
-        <script src="static/vendors/nice-select/js/jquery.nice-select.js"></script>
-        <script src="static/js/mail-script.js"></script>
-        <script src="static/js/stellar.js"></script>
-        <script src="static/vendors/lightbox/simpleLightbox.min.js"></script>
-        <script src="static/js/custom.js"></script>
+<script src="static/js/popper.js"></script>
+<script src="static/js/bootstrap.min.js"></script>
+<script src="static/vendors/owl-carousel/owl.carousel.min.js"></script>
+<script src="static/js/jquery.ajaxchimp.min.js"></script>
+<script src="static/js/mail-script.js"></script>
+<script src="static/vendors/bootstrap-datepicker/bootstrap-datetimepicker.min.js"></script>
+<script src="static/vendors/nice-select/js/jquery.nice-select.js"></script>
+<script src="static/js/mail-script.js"></script>
+<script src="static/js/stellar.js"></script>
+<script src="static/vendors/lightbox/simpleLightbox.min.js"></script>
+<script src="static/js/custom.js"></script>
+<!-- <script>
+  function theAjax(uri,data){
+    return $.ajax({
+        type:"POST",
+        dataType:"json",
+        url: uri,
+        data: data
+    })
+  }
+  $("#book").on("click",function(){
+    var data = {
+      "csrfmiddlewaretoken" : $("input[name=csrfmiddlewaretoken]").val(),
+      "room_name": $("td[name=room_name]").innerHTML,
+      "start_date": $("td[name=start_date]").innerHTML,
+      "end_data" : $("td[name=end_date]").innerHTML,
+    };
+    console.log(data);
+    theAjax("/tutorial/book/",data)
+    .done(function(response){
+      if(response['status'] == 1)
+      {
+        $("#statusReport").html("OTP sent to your Mobile!!");
+        // setTimeout((function(){ $("#verify").prop('disabled',true); }), 120000);
+      }
+      else if(response['status'] == 2)
+      {
+        $("#statusReport").html("Please recheck your VHN number .");
+      }
+      else
+      {
+        $("#statusReport").html("Please try Again after sometime(connection error).");
+      }
+    });
+  });
+</script> -->
 </body>
 </html>

@@ -10,6 +10,22 @@ from datetime import datetime
 
 # Create your views here.
 
+def signup_view(request):
+  post = request.POST
+  user = User.objects.create_user(post['username'],post['email'],post['password'])
+  user.save()
+  return render(request,'tutorial/layout.html')
+
+def login_view(request):
+  username = request.POST['username']
+  password = request.POST['password']
+  user = authenticate(request,username=username,password=password)
+  if user is not None:
+    login(user)
+  else:
+    pass
+  return render(request,'tutorial/layout.html')
+
 def home(request):
   redirect_uri = request.build_absolute_uri(reverse('tutorial:gettoken'))
   sign_in_url = get_signin_url(redirect_uri)
@@ -57,6 +73,17 @@ def events(request):
     context = { 'events': events['value'] }
     return render(request, 'tutorial/events.html', context)
 
+def book_a_room(request):
+  user = request.user
+  data = request.POST
+  print('karlo')
+  print(data['room_name'])
+  room = RoomInfo.objects.get(name=data['room_name'])
+  start_time = datetime.fromtimestamp(int(data['start_time'][:-3]))
+  end_time = datetime.fromtimestamp(int(data['end_time'][:-3]))
+  booked_room = Bookings(user=user,room_name=room,start_time=start_time,end_time=end_time)
+  booked_room.save()
+  return render(request,'tutorial/layout.html')
 
 def fillData(path):
   room_sheets = xlrd.open_workbook(path)
@@ -74,30 +101,25 @@ def fillData(path):
 
 def check_availability(request):
   post = request.POST
-  print ('karlo acche se')
+  # print ('karlo acche se')
   #'start': ['2019-07-12 11:50'], 'duration': ['39']
-  
+  user = request.user
   start_time = epochs(post['start'])
   end_time = start_time + int(post['duration'])*60
-  print(post['start'])
-  print(post['duration'])
-  print(start_time)
-  print(end_time)
   booked_rooms = Bookings.objects.all()
   all_rooms = RoomInfo.objects.all()
   available_rooms = []
   s = set()
-  cnt=0
+  #cnt=0
   for i in booked_rooms:
-
-    if cnt == 0:
-      print("tm:"+str(i.start_time.timestamp()))
-    if i.start_time.timestamp()<=start_time<=i.end_time.timestamp() or i.start_time.timestamp()<=end_time<=i.end_time.timestamp():
+    # if cnt == 0:
+    #   print("tm:"+str(i.start_time.timestamp()))
+    if i.user==user and (i.start_time.timestamp()<=start_time<=i.end_time.timestamp() or i.start_time.timestamp()<=end_time<=i.end_time.timestamp()):
       s.add(i.room_name)
   for i in all_rooms:
     if i not in s:
       available_rooms.append(i)
-  return render(request,'tutorial/timeformat.html',{'available_rooms':all_rooms})
+  return render(request,'tutorial/timeformat.html',{'available_rooms':all_rooms,'start':start_time,'end':end_time})
 
 def epochs(tm):
   stArr=tm.split(' ')

@@ -14,5 +14,7 @@ urlpatterns = [
   # Events view ('/tutorial/events/')
   url(r'^events/$', views.events, name='events'),
 
-  url(r'^timeformat/$', views.check_availability, name='availa')  
+  url(r'^timeformat/$', views.check_availability, name='availa'),
+  url(r'^book/$', views.book_a_room, name='booking'),
+
 ]

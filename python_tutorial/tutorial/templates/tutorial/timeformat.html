@@ -7,11 +7,17 @@
   </tr>
 
   {% for room in available_rooms %}
-    <tr>
-      <td>{{ room.name }}</td>
-      <td>{{ room.location }}</td>
-      <!-- <td>{{ event.end.dateTime }} ({{ event.end.timeZone }})</td> -->
-    </tr>
+      <tr>
+        <form action='/tutorial/book/' method='post'>{% csrf_token %}
+          <td>{{ room.name }}</td>
+          <td>{{ room.location }}</td>
+          <td> <input type="hidden" name="start_time" value="{{ start }}"></input></td>
+          <td> <input type="hidden" name="end_time" value="{{ end }}"> </input></td>
+          <td> <input type="hidden" name="room_name" value="{{ room.name }}"></input></td>
+          <!-- <td>{{ event.end.dateTime }} ({{ event.end.timeZone }})</td> -->
+          <td><button id="book" type="submit" class="book_now_btn button_hover" >Book</button></td>
+        </form>
+      </tr>
   {% endfor %}
 </table>
 {% endblock %}
